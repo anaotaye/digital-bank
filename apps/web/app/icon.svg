@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D9603C"/>
+      <stop offset="100%" stop-color="#B04424"/>
+    </linearGradient>
+    <clipPath id="clip">
+      <rect width="128" height="128" rx="28" ry="28"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#clip)">
+    <rect width="128" height="128" fill="url(#bg)"/>
+    <text
+      x="64" y="92"
+      text-anchor="middle"
+      font-family="'Fraunces', ui-serif, Georgia, serif"
+      font-style="italic"
+      font-weight="500"
+      font-size="90"
+      fill="#FDF8F3"
+      style="font-variation-settings: 'SOFT' 100, 'opsz' 144;"
+    >A</text>
+  </g>
+</svg>

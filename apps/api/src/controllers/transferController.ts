@@ -21,10 +21,13 @@ import { transfer } from "../services/nibss/endpoints.js";
  */
 export const initiateTransfer: RequestHandler = async (req, res, next) => {
   try {
-    const { toAccountNumber, amount } = req.body as {
-      toAccountNumber: string;
-      amount: number;
-    };
+    const { toAccountNumber, amount, recipientName, recipientBankCode } =
+      req.body as {
+        toAccountNumber: string;
+        amount: number;
+        recipientName: string;
+        recipientBankCode?: string;
+      };
 
     const customer = await Customer.findById(req.customer!.id);
     if (!customer) {
@@ -57,6 +60,8 @@ export const initiateTransfer: RequestHandler = async (req, res, next) => {
       direction: "debit",
       fromAccount: fromAccountNumber,
       toAccount: toAccountNumber,
+      recipientName,
+      recipientBankCode,
       amount,
       status: "PENDING",
       initiatedAt: new Date(),
@@ -84,6 +89,8 @@ export const initiateTransfer: RequestHandler = async (req, res, next) => {
           amount: nibssResult.amount,
           from: nibssResult.from,
           to: nibssResult.to,
+          recipientName: localTx.recipientName,
+          recipientBankCode: localTx.recipientBankCode,
           initiatedAt: localTx.initiatedAt,
         },
       });

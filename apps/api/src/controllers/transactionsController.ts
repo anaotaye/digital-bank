@@ -17,6 +17,8 @@ function formatTransaction(tx: any) {
     amount: tx.amount,
     from: tx.fromAccount,
     to: tx.toAccount,
+    recipientName: tx.recipientName ?? null,
+    recipientBankCode: tx.recipientBankCode ?? null,
     initiatedAt: tx.initiatedAt,
     completedAt: tx.completedAt ?? null,
   };

@@ -7,6 +7,8 @@ export interface ITransaction extends Document {
   toAccount: string;
   amount: number;
   status: "PENDING" | "SUCCESS" | "FAILED";
+  recipientName?: string;
+  recipientBankCode?: string;
   nibssTransactionId?: string;
   initiatedAt: Date;
   completedAt?: Date;
@@ -44,6 +46,8 @@ const transactionSchema = new Schema<ITransaction>(
       enum: ["PENDING", "SUCCESS", "FAILED"],
       default: "PENDING",
     },
+    recipientName: { type: String }, // captured at transfer time from name enquiry
+    recipientBankCode: { type: String }, // optional, when available
     nibssTransactionId: {
       type: String,
       index: true,

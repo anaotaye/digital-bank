@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { SignupSchema, LoginSchema } from "@repo/shared";
 import { validate } from "../middleware/validate.js";
-import { signup, login } from "../controllers/authController.js";
+import { signup, login, logout } from "../controllers/authController.js";
 import { methodNotAllowed } from "../middleware/methodNotAllowed.js";
 
 export const authRouter = Router();
@@ -11,3 +11,6 @@ authRouter.all("/signup", methodNotAllowed(["POST"]));
 
 authRouter.post("/login", validate(LoginSchema), login);
 authRouter.all("/login", methodNotAllowed(["POST"]));
+
+authRouter.post("/logout", logout);
+authRouter.all("/logout", methodNotAllowed(["POST"]));

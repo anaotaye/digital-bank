@@ -4,6 +4,7 @@ import { Customer } from "../models/index.js";
 import { AppError } from "../utils/AppError.js";
 import { hashPassword, verifyPassword } from "../utils/password.js";
 import { signCustomerToken } from "../utils/jwt.js";
+import { setAuthCookie, clearAuthCookie } from "../utils/cookies.js";
 
 /**
  * POST /api/auth/signup
@@ -13,7 +14,7 @@ import { signCustomerToken } from "../utils/jwt.js";
  */
 export const signup: RequestHandler<
   never,
-  { customer: any; token: string },
+  { customer: any },
   SignupInput
 > = async (req, _res, next) => {
   try {
@@ -39,8 +40,11 @@ export const signup: RequestHandler<
     // Sign JWT with only the customer ID (no email/name — DB is source of truth)
     const token = signCustomerToken({ id: customer._id.toString() });
 
+    // Token lives only in an HttpOnly cookie — never in the response body
+    setAuthCookie(_res, token);
+
     // customer.toJSON() auto-strips passwordHash and __v
-    return _res.status(201).json({ customer, token });
+    return _res.status(201).json({ customer });
   } catch (err) {
     next(err);
   }
@@ -57,7 +61,7 @@ export const signup: RequestHandler<
  */
 export const login: RequestHandler<
   never,
-  { customer: any; token: string },
+  { customer: any },
   LoginInput
 > = async (req, _res, next) => {
   try {
@@ -82,9 +86,23 @@ export const login: RequestHandler<
     // Sign JWT
     const token = signCustomerToken({ id: customer._id.toString() });
 
+    // Token lives only in an HttpOnly cookie — never in the response body
+    setAuthCookie(_res, token);
+
     // customer.toJSON() auto-strips passwordHash and __v
-    return _res.status(200).json({ customer, token });
+    return _res.status(200).json({ customer });
   } catch (err) {
     next(err);
   }
+};
+
+/**
+ * POST /api/auth/logout
+ *
+ * Clear the auth cookie. Deliberately NOT behind authenticateCustomer —
+ * logging out an already-logged-out session is idempotent and safe.
+ */
+export const logout: RequestHandler = (_req, res) => {
+  clearAuthCookie(res);
+  return res.status(200).json({ message: "Logged out" });
 };
