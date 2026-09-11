@@ -42,14 +42,12 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: "Ann's Bank",
     title: "Ann's Bank",
-    description:
-      "Banking made kind. A fullstack digital banking app simulating a Nigerian fintech, built on the NIBSS by Phoenix API.",
+    description: "Banking made kind.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Ann's Bank",
-    description:
-      "Banking made kind. A fullstack digital banking app simulating a Nigerian fintech, built on the NIBSS by Phoenix API.",
+    description: "Banking made kind.",
   },
 };
 
