@@ -36,7 +36,7 @@ export function ResultStep({
           >
             Transfer <em className="text-danger italic">failed</em>.
           </h1>
-          <p className="mx-auto max-w-[280px] font-sans text-sm text-ink-500">
+          <p className="mx-auto max-w-70 font-sans text-sm text-ink-500">
             {failureReason}
           </p>
         </div>

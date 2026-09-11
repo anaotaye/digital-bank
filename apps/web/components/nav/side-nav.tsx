@@ -43,7 +43,7 @@ export function SideNav() {
               )}
             >
               <Icon
-                className="h-[18px] w-[18px]"
+                className="h-4.5 w-4.5"
                 strokeWidth={active ? 2.25 : 1.75}
               />
               {label}

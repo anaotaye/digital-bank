@@ -88,7 +88,7 @@ export function AmountStep({
               {focused && (
                 <span
                   aria-hidden
-                  className="absolute top-1/2 -right-[0.14em] h-[0.72em] w-[3px] -translate-y-1/2 rounded-full bg-primary animate-caret-blink"
+                  className="absolute top-1/2 right-[-0.14em] h-[0.72em] w-0.75 -translate-y-1/2 rounded-full bg-primary animate-caret-blink"
                 />
               )}
             </span>
