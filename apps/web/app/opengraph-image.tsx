@@ -1,24 +1,23 @@
 import { ImageResponse } from "next/og";
+import { loadReceiptFonts } from "@/lib/og-fonts";
 
-export const runtime = "edge";
+// Next 16 deprecates the Edge runtime in favor of Node.js — see the same
+// note on app/api/receipt/[id]/route.tsx.
+export const runtime = "nodejs";
 export const alt = "Ann's Bank — Banking made kind.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-async function loadFraunces() {
-  const cssRes = await fetch(
-    "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..800,50..100;1,9..144,300..800,50..100&display=swap",
-  );
-  const css = await cssRes.text();
-  const url = css.match(/src: url\((.+?)\) format\('(opentype|truetype)'\)/)?.[1];
-
-  if (!url) throw new Error("Failed to extract Fraunces URL");
-  return fetch(url).then((response) => response.arrayBuffer());
-}
-
 const pills = ["Next.js", "TypeScript", "Express", "MongoDB", "NIBSS API"];
 
 export default async function Image() {
+  const fonts = await loadReceiptFonts();
+  if (fonts.length === 0) {
+    // satori can't lay out any text at all with zero fonts loaded — surface
+    // this as a clean 502 rather than the framework's generic pipe-failure 500.
+    return new Response(null, { status: 502 });
+  }
+
   return new ImageResponse(
     (
       <div
@@ -59,9 +58,9 @@ export default async function Image() {
             style={{
               display: "flex",
               color: "#C9522F",
-              fontFamily: "monospace",
+              fontFamily: "JetBrains Mono",
               fontSize: 15,
-              fontWeight: 600,
+              fontWeight: 400,
               letterSpacing: 4,
             }}
           >
@@ -83,7 +82,14 @@ export default async function Image() {
             }}
           >
             <span style={{ display: "flex", color: "#1D1A17" }}>Banking made</span>
-            <span style={{ display: "flex", color: "#C9522F", fontStyle: "italic" }}>
+            <span
+              style={{
+                display: "flex",
+                color: "#C9522F",
+                fontStyle: "italic",
+                fontWeight: 500,
+              }}
+            >
               kind.
             </span>
           </div>
@@ -92,7 +98,7 @@ export default async function Image() {
               display: "flex",
               maxWidth: 900,
               color: "#756E68",
-              fontFamily: "system-ui",
+              fontFamily: "Instrument Sans",
               fontSize: 26,
               lineHeight: 1.35,
             }}
@@ -113,7 +119,7 @@ export default async function Image() {
                 borderRadius: 999,
                 backgroundColor: "#FFF8ED",
                 color: "#756E68",
-                fontFamily: "system-ui",
+                fontFamily: "Instrument Sans",
                 fontSize: 16,
               }}
             >
@@ -125,14 +131,12 @@ export default async function Image() {
     ),
     {
       ...size,
-      fonts: [
-        {
-          name: "Fraunces",
-          data: await loadFraunces(),
-          style: "italic",
-          weight: 500,
-        },
-      ],
+      fonts: fonts.map((f) => ({
+        name: f.name,
+        data: f.data,
+        weight: f.weight,
+        style: f.style,
+      })),
     },
   );
 }

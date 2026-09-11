@@ -9,8 +9,8 @@ const COOKIE_NAME = "token";
  */
 const baseCookieOptions: CookieOptions = {
   httpOnly: true,
-  secure: env.NODE_ENV === "production", // http on localhost, https everywhere else
-  sameSite: "strict", // cookie only sent for same-site requests
+  secure: env.NODE_ENV === "production",
+  sameSite: env.NODE_ENV === "production" ? "none" : "lax",
   path: "/",
 };
 

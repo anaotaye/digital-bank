@@ -198,23 +198,28 @@ export async function GET(
         >
           {tx.status === "FAILED" ? "Attempted" : "Sent"}
         </div>
-        <div style={{ display: "flex", alignItems: "baseline", marginTop: 8 }}>
+        <div style={{ display: "flex", alignItems: "flex-end", marginTop: 8 }}>
           <span
             style={{
+              display: "flex",
               fontFamily: "Fraunces",
               fontWeight: 400,
               fontSize: 68,
+              lineHeight: 1,
               color: "#C9522F",
               marginRight: 4,
+              marginTop: 3,
             }}
           >
             ₦
           </span>
           <span
             style={{
+              display: "flex",
               fontFamily: "Fraunces",
               fontWeight: 400,
               fontSize: 92,
+              lineHeight: 1,
               color: "#0F0E0D",
             }}
           >
