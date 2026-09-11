@@ -1,22 +1,21 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 
-export const runtime = "edge";
+// Bundled locally rather than fetched from Google Fonts at request time —
+// that CSS response is scraped by format string and format/subset URLs
+// change without notice, so a live fetch is one Google-side change away
+// from breaking this route (and Next 16 deprecates the Edge runtime this
+// route used to run on anyway — see the same note on
+// app/api/receipt/[id]/route.tsx).
+export const runtime = "nodejs";
 export const alt = "Ann's Bank — Banking made kind.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-async function loadFraunces() {
-  const cssRes = await fetch(
-    "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..800,50..100;1,9..144,300..800,50..100&display=swap",
-  );
-  const css = await cssRes.text();
-  const url = css.match(
-    /src: url\((.+?)\) format\('(opentype|truetype)'\)/,
-  )?.[1];
-
-  if (!url) throw new Error("Failed to extract Fraunces URL");
-  return fetch(url).then((response) => response.arrayBuffer());
-}
+const frauncesItalic = await readFile(
+  join(process.cwd(), "assets/fonts/Fraunces-Italic-500.woff"),
+);
 
 const pills = ["Next.js", "TypeScript", "Express", "MongoDB", "NIBSS API"];
 
@@ -132,7 +131,7 @@ export default async function Image() {
       fonts: [
         {
           name: "Fraunces",
-          data: await loadFraunces(),
+          data: frauncesItalic,
           style: "italic",
           weight: 500,
         },
