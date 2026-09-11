@@ -27,9 +27,9 @@ export function PasswordInput({
         aria-label={visible ? "Hide password" : "Show password"}
       >
         {visible ? (
-          <EyeOff className="size-[18px]" />
+          <EyeOff className="size-4.5" />
         ) : (
-          <Eye className="size-[18px]" />
+          <Eye className="size-4.5" />
         )}
       </button>
     </div>
