@@ -31,7 +31,7 @@ export function AmountStep({
     ([path]) => api<BalanceResponse>(path),
   );
   const balance =
-    balanceData?.accountNumber === accountNumber ? balanceData.balance : 0;
+    balanceData?.accountNumber === accountNumber ? balanceData?.balance : 0;
 
   const amount = Number(rawAmount) || 0;
   const displayAmount = amount ? amount.toLocaleString("en-NG") : "0";

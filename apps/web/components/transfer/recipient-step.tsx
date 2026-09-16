@@ -101,16 +101,18 @@ export function RecipientStep({
 
       {data && !isLoading && !error && <RecipientCard recipient={data} />}
 
-      <SubmitButton
-        size="lg"
-        className="mt-auto w-full"
-        disabled={!canContinue}
-        onClick={() => {
-          if (data) onNext(data);
-        }}
-      >
-        Continue
-      </SubmitButton>
+      <div className="sticky bottom-24 z-10 -mx-6 mt-auto bg-cream px-6 pt-2 lg:bottom-8">
+        <SubmitButton
+          size="lg"
+          className="w-full"
+          disabled={!canContinue}
+          onClick={() => {
+            if (data) onNext(data);
+          }}
+        >
+          Continue
+        </SubmitButton>
+      </div>
     </div>
   );
 }

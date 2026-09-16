@@ -1,13 +1,6 @@
 import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-
-// Bundled locally rather than fetched from Google Fonts at request time —
-// that CSS response is scraped by format string and format/subset URLs
-// change without notice, so a live fetch is one Google-side change away
-// from breaking this route (and Next 16 deprecates the Edge runtime this
-// route used to run on anyway — see the same note on
-// app/api/receipt/[id]/route.tsx).
 export const runtime = "nodejs";
 export const alt = "Ann's Bank — Banking made kind.";
 export const size = { width: 1200, height: 630 };

@@ -16,10 +16,20 @@ export function QuickActions({
   bankName,
 }: QuickActionsProps) {
   const share = async () => {
+    const text = `Account name: ${accountName}\nBank name: ${bankName}\nAccount number: ${accountNumber}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ text });
+      } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") return;
+        toast.error("Couldn't share");
+      }
+      return;
+    }
+
     try {
-      await navigator.clipboard.writeText(
-        `Account name: ${accountName}\nBank name: ${bankName}\nAccount number: ${accountNumber}`,
-      );
+      await navigator.clipboard.writeText(text);
       toast.success("Account details copied — share it with anyone.");
     } catch {
       toast.error("Couldn't copy");
