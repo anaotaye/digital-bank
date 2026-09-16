@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Instrument_Sans, JetBrains_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { AuthProvider } from "@/lib/auth";
 import { SwrProvider } from "@/lib/swr-config";
 import { Toaster } from "@/components/ui/sonner";
@@ -77,6 +78,7 @@ export default function RootLayout({
             />
           </SwrProvider>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
