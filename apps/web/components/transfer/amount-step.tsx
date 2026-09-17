@@ -119,14 +119,16 @@ export function AmountStep({
         </p>
       )}
 
-      <SubmitButton
-        size="lg"
-        className="w-full"
-        disabled={!canContinue}
-        onClick={() => onNext(amount)}
-      >
-        Continue
-      </SubmitButton>
+      <div className="sticky bottom-24 z-10 -mx-6 bg-cream px-6 pt-2 lg:bottom-8">
+        <SubmitButton
+          size="lg"
+          className="w-full"
+          disabled={!canContinue}
+          onClick={() => onNext(amount)}
+        >
+          Continue
+        </SubmitButton>
+      </div>
     </div>
   );
 }

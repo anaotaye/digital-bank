@@ -4,6 +4,7 @@ import { Transaction } from "../models/index.js";
 import type { ITransaction } from "../models/index.js";
 import { AppError } from "../utils/AppError.js";
 import { getTransactionStatus } from "../services/nibss/endpoints.js";
+import { renderReceiptPng } from "../utils/renderReceiptImage.js";
 
 /**
  * Shared response formatter — keeps the single-transaction and list responses
@@ -30,6 +31,29 @@ function normalizeStatus(s: string): "PENDING" | "SUCCESS" | "FAILED" {
     return upper;
   }
   return "PENDING";
+}
+
+/**
+ * Look up one transaction owned by `ownerCustomerId`, by our internal Mongo
+ * _id or by the NIBSS transactionId. Shared by the JSON detail endpoint and
+ * the receipt image endpoint so the ownership check only lives in one place.
+ */
+async function findOwnedTransaction(
+  transactionId: string,
+  ownerCustomerId: string,
+): Promise<ITransaction | null> {
+  if (mongoose.isValidObjectId(transactionId)) {
+    const byId = await Transaction.findOne({
+      _id: transactionId,
+      ownerCustomerId,
+    });
+    if (byId) return byId;
+  }
+
+  return Transaction.findOne({
+    nibssTransactionId: transactionId,
+    ownerCustomerId,
+  });
 }
 
 /**
@@ -100,23 +124,7 @@ export const getTransactionById: RequestHandler = async (req, res, next) => {
     const { transactionId } = req.params;
     const ownerCustomerId = req.customer!.id;
 
-    // Try our internal _id first (only if it's a valid ObjectId — otherwise
-    // Mongoose would cast-error or match unpredictably).
-    let localTx: ITransaction | null = null;
-    if (mongoose.isValidObjectId(transactionId)) {
-      localTx = await Transaction.findOne({
-        _id: transactionId,
-        ownerCustomerId,
-      });
-    }
-
-    // Fall back to the NIBSS transactionId.
-    if (!localTx) {
-      localTx = await Transaction.findOne({
-        nibssTransactionId: transactionId,
-        ownerCustomerId,
-      });
-    }
+    const localTx = await findOwnedTransaction(transactionId, ownerCustomerId);
 
     if (!localTx) {
       return next(new AppError(404, "Transaction not found"));
@@ -154,6 +162,35 @@ export const getTransactionById: RequestHandler = async (req, res, next) => {
         nibss: nibssPayload,
       },
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/**
+ * GET /api/transactions/:transactionId/receipt
+ *
+ * Renders the transfer receipt as a PNG. Lives on the API rather than the
+ * frontend so the request can be authenticated the same way every other
+ * transaction endpoint is — via the httpOnly auth cookie, which is scoped to
+ * this origin, not the frontend's.
+ * Requires authentication.
+ */
+export const getTransactionReceipt: RequestHandler = async (req, res, next) => {
+  try {
+    const { transactionId } = req.params;
+    const ownerCustomerId = req.customer!.id;
+
+    const localTx = await findOwnedTransaction(transactionId, ownerCustomerId);
+    if (!localTx) {
+      return next(new AppError(404, "Transaction not found"));
+    }
+
+    const png = await renderReceiptPng(formatTransaction(localTx));
+
+    res.set("Content-Type", "image/png");
+    res.set("Cache-Control", "private, max-age=300");
+    return res.send(png);
   } catch (err) {
     next(err);
   }

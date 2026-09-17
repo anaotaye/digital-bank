@@ -1,6 +1,6 @@
 # Ann's Bank
 
-A fullstack digital banking application built for the NIBSS by Phoenix training program (TS Academy). Simulates a Nigerian fintech: customers onboard with BVN/NIN, get a bank account, send money to any account in the NIBSS simulator, and track their history.
+A fullstack digital banking application built for the Backend training program by TS Academy (Hajime Cohort). Simulates a Nigerian fintech: customers onboard with BVN/NIN, get a bank account, send money to any account in the NIBSS simulator, and track their history.
 
 ## Stack
 
@@ -72,20 +72,21 @@ Our backend is the fintech; NIBSS is the identity + settlement layer. Our own DB
 
 ## Backend endpoints
 
-| Method | Path | Auth | Purpose |
-|---|---|---|---|
-| POST | /api/auth/signup | — | Create customer, set auth cookie |
-| POST | /api/auth/login | — | Verify credentials, set auth cookie |
-| POST | /api/auth/logout | — | Clear auth cookie |
-| GET | /api/me | ✓ | Current customer |
-| POST | /api/kyc/bvn | ✓ | Seed a BVN (via NIBSS `insertBvn`), link to customer |
-| POST | /api/kyc/nin | ✓ | Seed a NIN, link to customer |
-| POST | /api/account | ✓ | Create the customer's account (max 1 per customer) |
-| GET | /api/account/balance | ✓ | Fetch balance live from NIBSS |
-| GET | /api/account/name-enquiry/:accountNumber | ✓ | Look up an account holder's name |
-| POST | /api/transfer | ✓ | Initiate transfer, record transaction |
-| GET | /api/transactions | ✓ | Paginated list, filtered to the caller |
-| GET | /api/transactions/:id | ✓ | Single transaction with fresh NIBSS status |
+| Method | Path                                     | Auth | Purpose                                              |
+| ------ | ---------------------------------------- | ---- | ---------------------------------------------------- |
+| POST   | /api/auth/signup                         | —    | Create customer, set auth cookie                     |
+| POST   | /api/auth/login                          | —    | Verify credentials, set auth cookie                  |
+| POST   | /api/auth/logout                         | —    | Clear auth cookie                                    |
+| GET    | /api/me                                  | ✓    | Current customer                                     |
+| POST   | /api/kyc/bvn                             | ✓    | Seed a BVN (via NIBSS `insertBvn`), link to customer |
+| POST   | /api/kyc/nin                             | ✓    | Seed a NIN, link to customer                         |
+| POST   | /api/account                             | ✓    | Create the customer's account (max 1 per customer)   |
+| GET    | /api/account/balance                     | ✓    | Fetch balance live from NIBSS                        |
+| GET    | /api/account/name-enquiry/:accountNumber | ✓    | Look up an account holder's name                     |
+| POST   | /api/transfer                            | ✓    | Initiate transfer, record transaction                |
+| GET    | /api/transactions                        | ✓    | Paginated list, filtered to the caller               |
+| GET    | /api/transactions/:id                    | ✓    | Single transaction with fresh NIBSS status           |
+| GET    | /api/transactions/:id/receipt            | ✓    | Transfer receipt, rendered as a PNG                  |
 
 ## Design system
 
@@ -103,5 +104,5 @@ packages/
 
 ## Credits
 
-Built by **[your name]** ([@anaotaye](https://github.com/anaotaye)) for the TS Academy Phoenix Cohort.
+Built by Anastasia Otaye ([@anaotaye](https://github.com/anaotaye)) for the TS Academy Hajime Cohort.
 NIBSS by Phoenix API by Onyekachi Obute.

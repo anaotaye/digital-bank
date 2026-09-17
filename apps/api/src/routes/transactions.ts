@@ -6,6 +6,7 @@ import { methodNotAllowed } from "../middleware/methodNotAllowed.js";
 import {
   listTransactions,
   getTransactionById,
+  getTransactionReceipt,
 } from "../controllers/transactionsController.js";
 
 export const transactionsRouter = Router();
@@ -26,3 +27,7 @@ transactionsRouter.all("/", methodNotAllowed(["GET"]));
 // with a fresh NIBSS status. Accepts our internal Mongo _id OR the NIBSS reference.
 transactionsRouter.get("/:transactionId", getTransactionById);
 transactionsRouter.all("/:transactionId", methodNotAllowed(["GET"]));
+
+// GET /api/transactions/:transactionId/receipt — the transfer receipt as a PNG.
+transactionsRouter.get("/:transactionId/receipt", getTransactionReceipt);
+transactionsRouter.all("/:transactionId/receipt", methodNotAllowed(["GET"]));

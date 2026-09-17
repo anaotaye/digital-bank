@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Share2, Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BASE_URL } from "@/lib/api";
 
 type Props = {
   transactionId: string;
@@ -12,7 +13,13 @@ type Props = {
 };
 
 async function fetchReceiptFile(transactionId: string): Promise<File> {
-  const res = await fetch(`/api/receipt/${transactionId}`);
+  // Fetched directly from the API (not a Next.js route) so the browser
+  // attaches the httpOnly auth cookie — it's scoped to the API's origin,
+  // not the frontend's.
+  const res = await fetch(
+    new URL(`/api/transactions/${transactionId}/receipt`, BASE_URL),
+    { credentials: "include" },
+  );
   if (!res.ok) throw new Error("Couldn't generate the receipt");
   const blob = await res.blob();
   return new File([blob], `receipt-${transactionId}.png`, {
@@ -43,21 +50,32 @@ export function ReceiptActions({
     setIsSharing(true);
     try {
       const file = await fetchReceiptFile(transactionId);
+
       if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: `Receipt for ₦${amount.toLocaleString("en-NG")}`,
-          text: `Payment receipt from Ann's Bank${recipientName ? ` — to ${recipientName}` : ""}`,
-        });
-      } else {
-        downloadFile(file, `anns-bank-receipt-${transactionId}.png`);
-        toast.success("Receipt downloaded — share it from your files");
+        try {
+          await navigator.share({
+            files: [file],
+            title: `Receipt for ₦${amount.toLocaleString("en-NG")}`,
+            text: `Payment receipt from Ann's Bank${recipientName ? ` — to ${recipientName}` : ""}`,
+          });
+          return;
+        } catch (err) {
+          // AbortError covers two indistinguishable cases: the user
+          // dismissed the native share sheet, or the browser refused to
+          // open one at all (e.g. user-activation expired while we were
+          // fetching the file above). Either way we already have the file,
+          // so fall back to a direct download rather than doing nothing.
+          if (!(err instanceof DOMException && err.name === "AbortError")) {
+            throw err;
+          }
+        }
       }
+
+      downloadFile(file, `anns-bank-receipt-${transactionId}.png`);
+      toast.success("Receipt downloaded — share it from your files");
     } catch (err) {
-      // AbortError means the user dismissed the native share sheet — not a failure.
-      if (!(err instanceof DOMException && err.name === "AbortError")) {
-        toast.error("Couldn't share the receipt");
-      }
+      console.error("Receipt share failed", err);
+      toast.error("Couldn't share the receipt");
     } finally {
       setIsSharing(false);
     }

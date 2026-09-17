@@ -121,7 +121,7 @@ export function ConfirmStep({
         Transfers can&apos;t be reversed once sent. Double-check the recipient.
       </p>
 
-      <div className="mt-auto flex flex-col gap-2">
+      <div className="sticky bottom-24 z-10 mt-auto -mx-6 flex flex-col gap-2 bg-cream px-6 pt-2 lg:bottom-8">
         <SubmitButton
           size="lg"
           className="w-full"
